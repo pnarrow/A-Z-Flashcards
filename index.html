@@ -437,17 +437,17 @@
       // 1. อ่านตัวอักษรภาษาอังกฤษ
       const utterLetter = new SpeechSynthesisUtterance(letterText);
       utterLetter.lang = 'en-US';
-      utterLetter.rate = 0.5; // อ่านช้าลง
+      utterLetter.rate = 0.7; // อ่านช้าลง
 
       // 2. อ่านคำศัพท์ภาษาอังกฤษ
       const utterWord = new SpeechSynthesisUtterance(current.word);
       utterWord.lang = 'en-US';
-      utterWord.rate = 0.55; // อ่านช้าลง
+      utterWord.rate = 0.75; // อ่านช้าลง
 
       // 3. อ่านความหมายภาษาไทย
       const utterMeaning = new SpeechSynthesisUtterance(current.meaning);
       utterMeaning.lang = 'th-TH';
-      utterMeaning.rate = 0.6; // อ่านช้าลง
+      utterMeaning.rate = 0.8; // อ่านช้าลง
 
       // ลำดับการอ่านพร้อมเว้นวรรค (Pause)
       utterLetter.onend = () => {
