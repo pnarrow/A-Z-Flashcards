@@ -424,7 +424,7 @@
       renderAlphabetButtons();
     }
 
-    // ฟังก์ชันอ่านออกเสียงแบบช้าลง และเว้นวรรค
+// ฟังก์ชันอ่านออกเสียงแบบช้าลง และเว้นวรรค
     function speakCurrentCard() {
       if (!soundEnabled || !('speechSynthesis' in window)) return;
 
@@ -437,29 +437,43 @@
       // 1. อ่านตัวอักษรภาษาอังกฤษ
       const utterLetter = new SpeechSynthesisUtterance(letterText);
       utterLetter.lang = 'en-US';
-      utterLetter.rate = 0.7; // อ่านช้าลง
+      utterLetter.rate = 0.5; // [จุดที่ 1: ปรับความเร็ว] (ค่ายิ่งน้อยยิ่งช้า เช่น 0.4 - 0.5)
 
       // 2. อ่านคำศัพท์ภาษาอังกฤษ
       const utterWord = new SpeechSynthesisUtterance(current.word);
       utterWord.lang = 'en-US';
-      utterWord.rate = 0.75; // อ่านช้าลง
+      utterWord.rate = 0.5; // [จุดที่ 1: ปรับความเร็ว]
 
       // 3. อ่านความหมายภาษาไทย
       const utterMeaning = new SpeechSynthesisUtterance(current.meaning);
       utterMeaning.lang = 'th-TH';
-      utterMeaning.rate = 0.6; // อ่านช้าลง
+      utterMeaning.rate = 0.5; // [จุดที่ 1: ปรับความเร็ว]
+
+      // --- [จุดที่ 2: ปรับเสียงคนอ่าน / โทนเสียง] ---
+      const voices = window.speechSynthesis.getVoices();
+      
+      // เลือกเสียงภาษาอังกฤษที่มีในเครื่องผู้ใช้ (เช่น Samantha / Google US)
+      const enVoice = voices.find(v => v.lang.includes('en') && (v.name.includes('Samantha') || v.name.includes('Google')));
+      if (enVoice) {
+        utterLetter.voice = enVoice;
+        utterWord.voice = enVoice;
+      }
+      
+      // ปรับระดับเสียงทุ้ม-แหลม (Pitch) ได้ตั้งแต่ 0 ถึง 2 (1.0 คือปกติ, > 1.0 คือเสียงแหลมสูงน่ารัก)
+      utterLetter.pitch = 1.1;
+      utterWord.pitch = 1.1;
 
       // ลำดับการอ่านพร้อมเว้นวรรค (Pause)
       utterLetter.onend = () => {
         setTimeout(() => {
           if (soundEnabled) window.speechSynthesis.speak(utterWord);
-        }, 500); // เว้นวรรค 0.5 วินาที
+        }, 1000); // [จุดที่ 3: ปรับระยะห่าง ตัวอักษร -> คำศัพท์] (1000 = 1 วินาที)
       };
 
       utterWord.onend = () => {
         setTimeout(() => {
           if (soundEnabled) window.speechSynthesis.speak(utterMeaning);
-        }, 700); // เว้นวรรค 0.7 วินาที
+        }, 1200); // [จุดที่ 3: ปรับระยะห่าง คำศัพท์ -> ความหมาย] (1200 = 1.2 วินาที)
       };
 
       window.speechSynthesis.speak(utterLetter);
