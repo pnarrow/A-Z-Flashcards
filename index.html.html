@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#eaf7ff">
+  <title>A–Z Flashcards</title>
+  <style>
+    :root {
+      --bg-color: #eaf7ff;
+      --card-bg: #ffffff;
+      --primary-color: #4a90e2;
+      --text-color: #2c3e50;
+      --text-muted: #7f8c8d;
+      --border-radius: 16px;
+      --shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      padding: 12px 16px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .icon-btn {
+      background: #f0f4f8;
+      border: none;
+      font-size: 1.2rem;
+      padding: 8px 12px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .icon-btn:active {
+      transform: scale(0.9);
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+    }
+
+    .mode-switch, .case-switch {
+      display: flex;
+      flex: 1;
+      background: #e2edf8;
+      padding: 4px;
+      border-radius: 12px;
+    }
+
+    .mode, .case {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 8px 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mode.active, .case.active {
+      background: var(--card-bg);
+      color: var(--primary-color);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    .progress {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--text-muted);
+    }
+
+    .bar {
+      flex: 1;
+      height: 8px;
+      background: #d0e3f4;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    #progressBar {
+      height: 100%;
+      width: 3.8%;
+      background: var(--primary-color);
+      transition: width 0.3s ease;
+    }
+
+    .card-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav {
+      background: var(--card-bg);
+      border: none;
+      font-size: 2rem;
+      color: var(--primary-color);
+      width: 44px;
+      height: 80px;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s;
+    }
+
+    .nav:active {
+      transform: scale(0.95);
+    }
+
+    .card {
+      flex: 1;
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 20px 16px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      text-align: center;
+      user-select: none;
+    }
+
+    .letter {
+      font-size: 3.8rem;
+      font-weight: 800;
+      color: var(--primary-color);
+      line-height: 1;
+    }
+
+    .image-button {
+      background: #f7fafc;
+      border: 2px dashed #cbd5e1;
+      border-radius: 16px;
+      padding: 16px;
+      width: 100%;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .image-button:hover, .image-button:active {
+      background: #edf2f7;
+      border-color: var(--primary-color);
+      transform: scale(0.98);
+    }
+
+    .emoji {
+      font-size: 4.5rem;
+      line-height: 1;
+    }
+
+    .tap-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .word {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    .meaning {
+      font-size: 1.2rem;
+      color: #4a5568;
+    }
+
+    .quick {
+      display: flex;
+      gap: 12px;
+    }
+
+    .speak, .shuffle-one {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      transition: transform 0.1s;
+    }
+
+    .speak {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .shuffle-one {
+      background: #edf2f7;
+      color: var(--text-color);
+    }
+
+    .speak:active, .shuffle-one:active {
+      transform: scale(0.96);
+    }
+
+    .alphabet {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      background: var(--card-bg);
+      padding: 12px;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .alphabet button {
+      border: none;
+      background: #f0f4f8;
+      padding: 8px 0;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      color: var(--text-color);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .alphabet button.active {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    footer {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      padding-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <div class="brand">📚 <span>A–Z Flashcards</span></div>
+        <div class="subtitle">เรียนรู้ตัวอักษรภาษาอังกฤษอย่างสนุกสนาน</div>
+      </div>
+      <button id="soundToggle" class="icon-btn" aria-label="เปิดหรือปิดเสียง">🔊</button>
+    </header>
+
+    <section class="controls" aria-label="โหมดการเรียนรู้">
+      <div class="mode-switch">
+        <button id="orderedBtn" class="mode active">☷ โหมดเรียง</button>
+        <button id="randomBtn" class="mode">🔀 โหมดสุ่ม</button>
+      </div>
+      <div class="case-switch">
+        <button id="upperBtn" class="case active">A–Z</button>
+        <button id="lowerBtn" class="case">a–z</button>
+      </div>
+    </section>
+
+    <section class="progress">
+      <span id="progressText">1 / 26</span>
+      <div class="bar"><div id="progressBar"></div></div>
+    </section>
+
+    <section class="card-wrap">
+      <button id="prevBtn" class="nav left" aria-label="การ์ดก่อนหน้า">‹</button>
+
+      <article id="card" class="card" tabindex="0" aria-label="แฟลชการ์ด">
+        <div id="letter" class="letter">A</div>
+        <button id="imageButton" class="image-button" aria-label="แตะเพื่อฟังเสียง">
+          <div id="emoji" class="emoji">🍎</div>
+          <div class="tap-hint">แตะเพื่อฟังเสียง 🔊</div>
+        </button>
+        <div id="word" class="word">Apple</div>
+        <div id="meaning" class="meaning">แอปเปิล</div>
+      </article>
+
+      <button id="nextBtn" class="nav right" aria-label="การ์ดถัดไป">›</button>
+    </section>
+
+    <section class="quick">
+      <button id="speakBtn" class="speak">🔊 ฟังอีกครั้ง</button>
+      <button id="shuffleOneBtn" class="shuffle-one">สุ่มการ์ดนี้</button>
+    </section>
+
+    <section id="alphabet" class="alphabet" aria-label="เลือกตัวอักษร"></section>
+
+    <footer>
+      <span>ทำงานบน Safari / Chrome</span>
+      <span>•</span>
+      <span>iPhone / iPad Responsive</span>
+    </footer>
+  </main>
+
+  <script>
+    const cardsData = [
+      { letter: 'A', emoji: '🍎', word: 'Apple', meaning: 'แอปเปิล' },
+      { letter: 'B', emoji: '🍌', word: 'Banana', meaning: 'กล้วย' },
+      { letter: 'C', emoji: '🐱', word: 'Cat', meaning: 'แมว' },
+      { letter: 'D', emoji: '🐶', word: 'Dog', meaning: 'สุนัข' },
+      { letter: 'E', emoji: '🐘', word: 'Elephant', meaning: 'ช้าง' },
+      { letter: 'F', emoji: '🐟', word: 'Fish', meaning: 'ปลา' },
+      { letter: 'G', emoji: '🦒', word: 'Giraffe', meaning: 'ยีราฟ' },
+      { letter: 'H', emoji: '🏠', word: 'House', meaning: 'บ้าน' },
+      { letter: 'I', emoji: '🍦', word: 'Ice cream', meaning: 'ไอศกรีม' },
+      { letter: 'J', emoji: '🥤', word: 'Juice', meaning: 'น้ำผลไม้' },
+      { letter: 'K', emoji: '🪁', word: 'Kite', meaning: 'ว่าว' },
+      { letter: 'L', emoji: '🦁', word: 'Lion', meaning: 'สิงโต' },
+      { letter: 'M', emoji: '🐵', word: 'Monkey', meaning: 'ลิง' },
+      { letter: 'N', emoji: '🪹', word: 'Nest', meaning: 'รังนก' },
+      { letter: 'O', emoji: '🦉', word: 'Owl', meaning: 'นกฮูก' },
+      { letter: 'P', emoji: '🐧', word: 'Penguin', meaning: 'เพนกวิน' },
+      { letter: 'Q', emoji: '👑', word: 'Queen', meaning: 'ราชินี' },
+      { letter: 'R', emoji: '🐰', word: 'Rabbit', meaning: 'กระต่าย' },
+      { letter: 'S', emoji: '☀️', word: 'Sun', meaning: 'พระอาทิตย์' },
+      { letter: 'T', emoji: '🐯', word: 'Tiger', meaning: 'เสือ' },
+      { letter: 'U', emoji: '☂️', word: 'Umbrella', meaning: 'ร่ม' },
+      { letter: 'V', emoji: '🎻', word: 'Violin', meaning: 'ไวโอลิน' },
+      { letter: 'W', emoji: '🐋', word: 'Whale', meaning: 'วาฬ' },
+      { letter: 'X', emoji: '🩻', word: 'X-ray', meaning: 'เอ็กซเรย์' },
+      { letter: 'Y', emoji: '⛵', word: 'Yacht', meaning: 'เรือยอชต์' },
+      { letter: 'Z', emoji: '🦓', word: 'Zebra', meaning: 'ม้าลาย' }
+    ];
+
+    let currentIndex = 0;
+    let isUppercase = true;
+    let isRandomMode = false;
+    let soundEnabled = true;
+    let activeDeck = [...cardsData];
+
+    // DOM Elements
+    const letterEl = document.getElementById('letter');
+    const emojiEl = document.getElementById('emoji');
+    const wordEl = document.getElementById('word');
+    const meaningEl = document.getElementById('meaning');
+    const progressText = document.getElementById('progressText');
+    const progressBar = document.getElementById('progressBar');
+    const alphabetEl = document.getElementById('alphabet');
+    const soundToggle = document.getElementById('soundToggle');
+
+    function renderAlphabetButtons() {
+      alphabetEl.innerHTML = '';
+      cardsData.forEach((item, idx) => {
+        const btn = document.createElement('button');
+        btn.textContent = isUppercase ? item.letter : item.letter.toLowerCase();
+        btn.classList.toggle('active', activeDeck[currentIndex]?.letter === item.letter);
+        btn.onclick = () => {
+          const targetIndex = activeDeck.findIndex(c => c.letter === item.letter);
+          if (targetIndex !== -1) {
+            currentIndex = targetIndex;
+            updateCard();
+            speakCurrentCard();
+          }
+        };
+        alphabetEl.appendChild(btn);
+      });
+    }
+
+    function updateCard() {
+      const current = activeDeck[currentIndex];
+      letterEl.textContent = isUppercase ? current.letter : current.letter.toLowerCase();
+      emojiEl.textContent = current.emoji;
+      wordEl.textContent = current.word;
+      meaningEl.textContent = current.meaning;
+
+      progressText.textContent = `${currentIndex + 1} / ${activeDeck.length}`;
+      progressBar.style.width = `${((currentIndex + 1) / activeDeck.length) * 100}%`;
+
+      renderAlphabetButtons();
+    }
+
+    // ฟังก์ชันอ่านออกเสียงแบบช้าลง และเว้นวรรค
+    function speakCurrentCard() {
+      if (!soundEnabled || !('speechSynthesis' in window)) return;
+
+      // ยกเลิกเสียงเดิมที่กำลังพูดอยู่
+      window.speechSynthesis.cancel();
+
+      const current = activeDeck[currentIndex];
+      const letterText = isUppercase ? current.letter : current.letter.toLowerCase();
+
+      // 1. อ่านตัวอักษรภาษาอังกฤษ
+      const utterLetter = new SpeechSynthesisUtterance(letterText);
+      utterLetter.lang = 'en-US';
+      utterLetter.rate = 0.5; // อ่านช้าลง
+
+      // 2. อ่านคำศัพท์ภาษาอังกฤษ
+      const utterWord = new SpeechSynthesisUtterance(current.word);
+      utterWord.lang = 'en-US';
+      utterWord.rate = 0.55; // อ่านช้าลง
+
+      // 3. อ่านความหมายภาษาไทย
+      const utterMeaning = new SpeechSynthesisUtterance(current.meaning);
+      utterMeaning.lang = 'th-TH';
+      utterMeaning.rate = 0.6; // อ่านช้าลง
+
+      // ลำดับการอ่านพร้อมเว้นวรรค (Pause)
+      utterLetter.onend = () => {
+        setTimeout(() => {
+          if (soundEnabled) window.speechSynthesis.speak(utterWord);
+        }, 700); // เว้นวรรค 0.7 วินาที
+      };
+
+      utterWord.onend = () => {
+        setTimeout(() => {
+          if (soundEnabled) window.speechSynthesis.speak(utterMeaning);
+        }, 800); // เว้นวรรค 0.8 วินาที
+      };
+
+      window.speechSynthesis.speak(utterLetter);
+    }
+
+    // Event Listeners
+    document.getElementById('prevBtn').onclick = () => {
+      currentIndex = (currentIndex - 1 + activeDeck.length) % activeDeck.length;
+      updateCard();
+      speakCurrentCard();
+    };
+
+    document.getElementById('nextBtn').onclick = () => {
+      currentIndex = (currentIndex + 1) % activeDeck.length;
+      updateCard();
+      speakCurrentCard();
+    };
+
+    document.getElementById('speakBtn').onclick = speakCurrentCard;
+    document.getElementById('imageButton').onclick = speakCurrentCard;
+
+    document.getElementById('shuffleOneBtn').onclick = () => {
+      currentIndex = Math.floor(Math.random() * activeDeck.length);
+      updateCard();
+      speakCurrentCard();
+    };
+
+    document.getElementById('orderedBtn').onclick = (e) => {
+      isRandomMode = false;
+      document.getElementById('orderedBtn').classList.add('active');
+      document.getElementById('randomBtn').classList.remove('active');
+      activeDeck = [...cardsData];
+      currentIndex = 0;
+      updateCard();
+    };
+
+    document.getElementById('randomBtn').onclick = (e) => {
+      isRandomMode = true;
+      document.getElementById('randomBtn').classList.add('active');
+      document.getElementById('orderedBtn').classList.remove('active');
+      activeDeck = [...cardsData].sort(() => Math.random() - 0.5);
+      currentIndex = 0;
+      updateCard();
+    };
+
+    document.getElementById('upperBtn').onclick = () => {
+      isUppercase = true;
+      document.getElementById('upperBtn').classList.add('active');
+      document.getElementById('lowerBtn').classList.remove('active');
+      updateCard();
+    };
+
+    document.getElementById('lowerBtn').onclick = () => {
+      isUppercase = false;
+      document.getElementById('lowerBtn').classList.add('active');
+      document.getElementById('upperBtn').classList.remove('active');
+      updateCard();
+    };
+
+    soundToggle.onclick = () => {
+      soundEnabled = !soundEnabled;
+      soundToggle.textContent = soundEnabled ? '🔊' : '🔇';
+      if (!soundEnabled) window.speechSynthesis.cancel();
+    };
+
+    // Initialize
+    updateCard();
+  </script>
+</body>
+</html>
