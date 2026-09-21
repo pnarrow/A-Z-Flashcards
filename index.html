@@ -447,19 +447,19 @@
       // 3. อ่านความหมายภาษาไทย
       const utterMeaning = new SpeechSynthesisUtterance(current.meaning);
       utterMeaning.lang = 'th-TH';
-      utterMeaning.rate = 0.8; // อ่านช้าลง
+      utterMeaning.rate = 0.6; // อ่านช้าลง
 
       // ลำดับการอ่านพร้อมเว้นวรรค (Pause)
       utterLetter.onend = () => {
         setTimeout(() => {
           if (soundEnabled) window.speechSynthesis.speak(utterWord);
-        }, 700); // เว้นวรรค 0.7 วินาที
+        }, 500); // เว้นวรรค 0.5 วินาที
       };
 
       utterWord.onend = () => {
         setTimeout(() => {
           if (soundEnabled) window.speechSynthesis.speak(utterMeaning);
-        }, 800); // เว้นวรรค 0.8 วินาที
+        }, 700); // เว้นวรรค 0.7 วินาที
       };
 
       window.speechSynthesis.speak(utterLetter);
